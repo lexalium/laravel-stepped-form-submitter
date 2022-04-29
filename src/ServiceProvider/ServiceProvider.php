@@ -4,23 +4,22 @@ declare(strict_types=1);
 
 namespace Lexal\LaravelSteppedFormSubmitter\ServiceProvider;
 
+use Closure;
 use Illuminate\Contracts\Config\Repository;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
-use Lexal\FormSubmitter\FormSubmitter;
 use Lexal\FormSubmitter\FormSubmitterInterface;
 use Lexal\FormSubmitter\Transaction\TransactionInterface;
-use Lexal\FormSubmitter\TransactionalFormSubmitter;
 use Lexal\LaravelSteppedFormSubmitter\EventListener\FormFinishedEventListener;
+use Lexal\LaravelSteppedFormSubmitter\Factory\FormSubmitterFactory;
+use Lexal\LaravelSteppedFormSubmitter\Factory\FormSubmitterFactoryInterface;
+use Lexal\LaravelSteppedFormSubmitter\FormSubmitter;
 use Lexal\SteppedForm\EventDispatcher\Event\FormFinished;
 use LogicException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-use function array_map;
 use function dirname;
-use function is_string;
 use function sprintf;
 
 class ServiceProvider extends LaravelServiceProvider
@@ -49,6 +48,10 @@ class ServiceProvider extends LaravelServiceProvider
         }
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function register(): void
     {
         if (!$this->app->bound(Repository::class)) {
@@ -60,30 +63,18 @@ class ServiceProvider extends LaravelServiceProvider
             );
         }
 
-        $this->app->singleton(FormSubmitterInterface::class, function () {
-            $submitters = $this->getConfig('submitters', []);
+        $this->app->singleton(FormSubmitterFactoryInterface::class, FormSubmitterFactory::class);
 
-            if (!$submitters) {
-                throw new BindingResolutionException(
-                    'You must register at least one submitter to be able to submit form.',
-                );
-            }
+        $transactionClass = $this->getConfig('transaction_class');
 
-            $formSubmitter = new FormSubmitter(
-                ...array_map(fn (mixed $submitter) => $this->getInstance($submitter), $submitters),
-            );
+        if ($transactionClass !== null) {
+            $this->registerTransaction($transactionClass);
+        }
 
-            $useTransactional = $this->getConfig('use_transactional', false);
-
-            if ($useTransactional) {
-                $formSubmitter = new TransactionalFormSubmitter(
-                    $formSubmitter,
-                    $this->app->make(TransactionInterface::class),
-                );
-            }
-
-            return $formSubmitter;
-        });
+        $this->app->singleton(
+            FormSubmitterInterface::class,
+            $this->getFormSubmitterConcreteCallback($transactionClass),
+        );
     }
 
     /**
@@ -98,11 +89,25 @@ class ServiceProvider extends LaravelServiceProvider
         return $config->get("form-submitter.$key", $default);
     }
 
-    /**
-     * @throws BindingResolutionException
-     */
-    private function getInstance(mixed $instance): mixed
+    private function getFormSubmitterConcreteCallback(mixed $transactionClass): Closure
     {
-        return is_string($instance) ? $this->app->make($instance) : $instance;
+        return function () use ($transactionClass): FormSubmitterInterface {
+            return new FormSubmitter(
+                $this->app->make(FormSubmitterFactoryInterface::class),
+                $this->getConfig('submitters', []),
+                $transactionClass !== null,
+            );
+        };
+    }
+
+    private function registerTransaction(mixed $transactionClass): void
+    {
+        if ($transactionClass instanceof TransactionInterface) {
+            $concrete = static fn (): TransactionInterface => $transactionClass;
+        } else {
+            $concrete = $transactionClass;
+        }
+
+        $this->app->singleton(TransactionInterface::class, $concrete);
     }
 }

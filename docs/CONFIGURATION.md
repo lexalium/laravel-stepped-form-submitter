@@ -10,11 +10,12 @@ php artisan vendor:publish --provider="Lexal\LaravelSteppedFormSubmitter\Service
 
 You can update the following options in the `config/form-submitter.php` file:
 
-1. The flag `use_transactional` shows do we need or not transactions on the
-   form submitting.
+1. Use `transaction_class` option to place a class name, instance or service
+   alias which the FormSubmitter will use to handle transactions. Place null
+   or remove config to disable transactions.
 
 ```php
-'use_transactional' => false,
+'transaction_class' => false,
 ```
 
 2. Your custom form submitters that the service provider will pass to the

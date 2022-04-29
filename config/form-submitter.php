@@ -3,15 +3,17 @@
 return [
     /*
      * --------------------------------------------------------------------------------------
-     * Use Transactional Form Submitter
+     * Transaction Class
      * --------------------------------------------------------------------------------------
      *
-     * Will the Form Submitter use transaction (true) or not (false) on the form submit?
+     * Place a Transaction class or instance or service alias if the Form Submitter has to
+     * use transaction on the form submit.
+     * Place null or remove config to disable transactions.
      *
-     * Default: false
+     * Default: null
      */
 
-    'use_transactional' => false,
+    'transaction_class' => null,
 
     /*
      * --------------------------------------------------------------------------------------

@@ -16,8 +16,8 @@
     ],
     "require": {
         "php": "^8.0",
-        "illuminate/contracts": "^8.0 || ^9.0",
-        "illuminate/support": "^8.0 || ^9.0",
+        "illuminate/contracts": "^8.0 || ^9.0 || ^10.0",
+        "illuminate/support": "^8.0 || ^9.0 || ^10.0",
         "lexal/form-submitter": "^1.0",
         "lexal/stepped-form": "^1.1"
     },
@@ -29,8 +29,8 @@
         "webimpress/coding-standard": "^1.2"
     },
     "suggest": {
-        "illuminate/config": "Required to use Laravel config (^8.0 || ^9.0).",
-        "illuminate/events": "Required to listen Stepped Form event (^8.0 || ^9.0)."
+        "illuminate/config": "Required to use Laravel config (^8.0 || ^9.0 || ^10.0).",
+        "illuminate/events": "Required to listen Stepped Form event (^8.0 || ^9.0 || ^10.0)."
     },
     "autoload": {
         "psr-4": {
@@ -43,7 +43,10 @@
         }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     },
     "extra": {
         "laravel": {

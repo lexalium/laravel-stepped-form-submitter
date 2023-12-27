@@ -10,11 +10,18 @@ use Lexal\SteppedForm\EventDispatcher\Event\FormFinished;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class FormFinishedEventListenerTest extends TestCase
+final class FormFinishedEventListenerTest extends TestCase
 {
     private MockObject $formSubmitter;
 
     private FormFinishedEventListener $listener;
+
+    protected function setUp(): void
+    {
+        $this->formSubmitter = $this->createMock(FormSubmitterInterface::class);
+
+        $this->listener = new FormFinishedEventListener($this->formSubmitter);
+    }
 
     public function testHandle(): void
     {
@@ -42,14 +49,5 @@ class FormFinishedEventListenerTest extends TestCase
             ->method('submit');
 
         $this->listener->handle(new FormFinished('test'));
-    }
-
-    protected function setUp(): void
-    {
-        $this->formSubmitter = $this->createMock(FormSubmitterInterface::class);
-
-        $this->listener = new FormFinishedEventListener($this->formSubmitter);
-
-        parent::setUp();
     }
 }

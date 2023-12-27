@@ -6,7 +6,7 @@ namespace Lexal\LaravelSteppedFormSubmitter\Exception;
 
 use Exception;
 
-class NoSubmittersAddedException extends Exception
+final class NoSubmittersAddedException extends Exception
 {
     public function __construct()
     {

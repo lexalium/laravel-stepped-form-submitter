@@ -15,11 +15,10 @@ use Lexal\LaravelSteppedFormSubmitter\Exception\NoSubmittersAddedException;
 use function array_map;
 use function is_string;
 
-class FormSubmitterFactory implements FormSubmitterFactoryInterface
+final class FormSubmitterFactory implements FormSubmitterFactoryInterface
 {
-    public function __construct(
-        private Container $container,
-    ) {
+    public function __construct(private readonly Container $container)
+    {
     }
 
     /**
@@ -27,7 +26,7 @@ class FormSubmitterFactory implements FormSubmitterFactoryInterface
      *
      * @throws BindingResolutionException
      */
-    public function create(array $submitters, bool $useTransactional = false): FormSubmitterInterface
+    public function create(array $submitters): FormSubmitterInterface
     {
         if (!$submitters) {
             throw new NoSubmittersAddedException();
@@ -37,7 +36,7 @@ class FormSubmitterFactory implements FormSubmitterFactoryInterface
             ...array_map(fn (mixed $submitter): FormSubmitterInterface => $this->getInstance($submitter), $submitters),
         );
 
-        if ($useTransactional) {
+        if ($this->container->bound(TransactionInterface::class)) {
             $formSubmitter = new TransactionalFormSubmitter(
                 $formSubmitter,
                 $this->container->make(TransactionInterface::class),

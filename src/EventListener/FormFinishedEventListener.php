@@ -7,17 +7,16 @@ namespace Lexal\LaravelSteppedFormSubmitter\EventListener;
 use Lexal\FormSubmitter\FormSubmitterInterface;
 use Lexal\SteppedForm\EventDispatcher\Event\FormFinished;
 
-class FormFinishedEventListener
+final class FormFinishedEventListener
 {
-    public function __construct(
-        private FormSubmitterInterface $submitter,
-    ) {
+    public function __construct(private readonly FormSubmitterInterface $submitter)
+    {
     }
 
     public function handle(FormFinished $event): void
     {
-        if ($this->submitter->supportsSubmitting($event->getEntity())) {
-            $this->submitter->submit($event->getEntity());
+        if ($this->submitter->supportsSubmitting($event->entity)) {
+            $this->submitter->submit($event->entity);
         }
     }
 }

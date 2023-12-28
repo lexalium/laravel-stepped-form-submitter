@@ -8,17 +8,16 @@ use Lexal\FormSubmitter\FormSubmitterInterface;
 use Lexal\LaravelSteppedFormSubmitter\Exception\NoSubmittersAddedException;
 use Lexal\LaravelSteppedFormSubmitter\Factory\FormSubmitterFactoryInterface;
 
-class FormSubmitter implements FormSubmitterInterface
+final class FormSubmitter implements FormSubmitterInterface
 {
     private ?FormSubmitterInterface $submitter = null;
 
     public function __construct(
-        private FormSubmitterFactoryInterface $factory,
+        private readonly FormSubmitterFactoryInterface $factory,
         /**
          * @var string[]|FormSubmitterInterface[]
          */
-        private array $submitters,
-        private bool $useTransactional = false,
+        private readonly array $submitters,
     ) {
     }
 
@@ -48,7 +47,7 @@ class FormSubmitter implements FormSubmitterInterface
     private function getSubmitter(): FormSubmitterInterface
     {
         if ($this->submitter === null) {
-            $this->submitter = $this->factory->create($this->submitters, $this->useTransactional);
+            $this->submitter = $this->factory->create($this->submitters);
         }
 
         return $this->submitter;

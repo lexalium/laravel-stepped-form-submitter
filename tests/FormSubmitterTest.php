@@ -8,14 +8,21 @@ use Lexal\FormSubmitter\FormSubmitterInterface;
 use Lexal\LaravelSteppedFormSubmitter\Exception\NoSubmittersAddedException;
 use Lexal\LaravelSteppedFormSubmitter\Factory\FormSubmitterFactoryInterface;
 use Lexal\LaravelSteppedFormSubmitter\FormSubmitter;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
-class FormSubmitterTest extends TestCase
+final class FormSubmitterTest extends TestCase
 {
-    private MockObject $factory;
+    private FormSubmitterFactoryInterface&Stub $factory;
 
     private FormSubmitterInterface $submitter;
+
+    protected function setUp(): void
+    {
+        $this->factory = $this->createStub(FormSubmitterFactoryInterface::class);
+
+        $this->submitter = new FormSubmitter($this->factory, []);
+    }
 
     /**
      * @throws NoSubmittersAddedException
@@ -24,9 +31,7 @@ class FormSubmitterTest extends TestCase
     {
         $extendedSubmitter = $this->createMock(FormSubmitterInterface::class);
 
-        $this->factory->expects($this->once())
-            ->method('create')
-            ->with([], false)
+        $this->factory->method('create')
             ->willReturn($extendedSubmitter);
 
         $extendedSubmitter->expects($this->once())
@@ -42,16 +47,7 @@ class FormSubmitterTest extends TestCase
         $supports = $this->submitter->supportsSubmitting('test');
         $result = $this->submitter->submit('test');
 
-        $this->assertEquals(true, $supports);
-        $this->assertEquals('result', $result);
-    }
-
-    protected function setUp(): void
-    {
-        $this->factory = $this->createMock(FormSubmitterFactoryInterface::class);
-
-        $this->submitter = new FormSubmitter($this->factory, []);
-
-        parent::setUp();
+        self::assertTrue($supports);
+        self::assertEquals('result', $result);
     }
 }

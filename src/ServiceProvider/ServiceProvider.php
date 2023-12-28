@@ -22,7 +22,7 @@ use Psr\Container\NotFoundExceptionInterface;
 use function dirname;
 use function sprintf;
 
-class ServiceProvider extends LaravelServiceProvider
+final class ServiceProvider extends LaravelServiceProvider
 {
     private const CONFIG_FILENAME = 'form-submitter.php';
 
@@ -71,10 +71,7 @@ class ServiceProvider extends LaravelServiceProvider
             $this->registerTransaction($transactionClass);
         }
 
-        $this->app->singleton(
-            FormSubmitterInterface::class,
-            $this->getFormSubmitterConcreteCallback($transactionClass),
-        );
+        $this->app->singleton(FormSubmitterInterface::class, $this->getFormSubmitterConcreteCallback());
     }
 
     /**
@@ -89,13 +86,12 @@ class ServiceProvider extends LaravelServiceProvider
         return $config->get("form-submitter.$key", $default);
     }
 
-    private function getFormSubmitterConcreteCallback(mixed $transactionClass): Closure
+    private function getFormSubmitterConcreteCallback(): Closure
     {
-        return function () use ($transactionClass): FormSubmitterInterface {
+        return function (): FormSubmitterInterface {
             return new FormSubmitter(
                 $this->app->make(FormSubmitterFactoryInterface::class),
                 $this->getConfig('submitters', []),
-                $transactionClass !== null,
             );
         };
     }

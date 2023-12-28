@@ -14,5 +14,5 @@ interface FormSubmitterFactoryInterface
      *
      * @throws NoSubmittersAddedException
      */
-    public function create(array $submitters, bool $useTransactional = false): FormSubmitterInterface;
+    public function create(array $submitters): FormSubmitterInterface;
 }

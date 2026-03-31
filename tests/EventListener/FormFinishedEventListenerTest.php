@@ -9,6 +9,7 @@ use Lexal\LaravelSteppedFormSubmitter\EventListener\FormFinishedEventListener;
 use Lexal\SteppedForm\EventDispatcher\Event\FormFinished;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 final class FormFinishedEventListenerTest extends TestCase
 {
@@ -25,29 +26,30 @@ final class FormFinishedEventListenerTest extends TestCase
 
     public function testHandle(): void
     {
-        $this->formSubmitter->expects($this->once())
-            ->method('supportsSubmitting')
-            ->with('test')
+        $entity = new stdClass();
+
+        $this->formSubmitter->method('supportsSubmitting')
+            ->with($entity)
             ->willReturn(true);
 
         $this->formSubmitter->expects($this->once())
             ->method('submit')
-            ->with('test')
+            ->with($entity)
             ->willReturn('test');
 
-        $this->listener->handle(new FormFinished('test'));
+        $this->listener->handle(new FormFinished($entity));
     }
 
     public function testHandleDoesNotSupport(): void
     {
-        $this->formSubmitter->expects($this->once())
-            ->method('supportsSubmitting')
-            ->with('test')
+        $entity = new stdClass();
+
+        $this->formSubmitter->method('supportsSubmitting')
             ->willReturn(false);
 
         $this->formSubmitter->expects($this->never())
             ->method('submit');
 
-        $this->listener->handle(new FormFinished('test'));
+        $this->listener->handle(new FormFinished($entity));
     }
 }

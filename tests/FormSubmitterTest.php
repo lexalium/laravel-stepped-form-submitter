@@ -10,6 +10,7 @@ use Lexal\LaravelSteppedFormSubmitter\Factory\FormSubmitterFactoryInterface;
 use Lexal\LaravelSteppedFormSubmitter\FormSubmitter;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 final class FormSubmitterTest extends TestCase
 {
@@ -29,6 +30,8 @@ final class FormSubmitterTest extends TestCase
      */
     public function testSubmitter(): void
     {
+        $entity = new stdClass();
+
         $extendedSubmitter = $this->createMock(FormSubmitterInterface::class);
 
         $this->factory->method('create')
@@ -36,18 +39,18 @@ final class FormSubmitterTest extends TestCase
 
         $extendedSubmitter->expects($this->once())
             ->method('supportsSubmitting')
-            ->with('test')
+            ->with($entity)
             ->willReturn(true);
 
         $extendedSubmitter->expects($this->once())
             ->method('submit')
-            ->with('test')
-            ->willReturn('result');
+            ->with($entity)
+            ->willReturn($entity);
 
-        $supports = $this->submitter->supportsSubmitting('test');
-        $result = $this->submitter->submit('test');
+        $supports = $this->submitter->supportsSubmitting($entity);
+        $result = $this->submitter->submit($entity);
 
         self::assertTrue($supports);
-        self::assertEquals('result', $result);
+        self::assertEquals($entity, $result);
     }
 }

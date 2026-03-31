@@ -1,9 +1,9 @@
-# Stepped Form Submitter for Laravel & Lumen
+# Stepped Form Submitter for Laravel
 
 [![PHPUnit, PHPCS, PHPStan Tests](https://github.com/lexalium/laravel-stepped-form-submitter/actions/workflows/tests.yml/badge.svg)](https://github.com/lexalium/laravel-stepped-form-submitter/actions/workflows/tests.yml)
 
 The package is based on the [Form Submitter](https://github.com/lexalium/form-submitter) and built for the
-Laravel & Lumen framework.
+Laravel framework.
 
 <a id="readme-top" mame="readme-top"></a>
 
@@ -19,9 +19,9 @@ Table of Contents
 
 ## Requirements
 
-**PHP:** >=8.1
+**PHP:** >=8.2
 
-**Laravel:** ^9.0 || ^10.0
+**Laravel:** ^11.0 || ^12.0
 
 ## Installation
 
@@ -30,16 +30,6 @@ Via Composer
 ```
 composer require lexal/laravel-stepped-form-submitter
 ```
-
-### Additional changes for Lumen framework
-
-Add the following snippet to the `bootstrap/app.php` file under the providers section as follows:
-
-```php
-$app->register(Lexal\LaravelSteppedFormSubmitter\ServiceProvider\ServiceProvider::class);
-```
-
-<div style="text-align: right">(<a href="#readme-top">back to top</a>)</div>
 
 ## Configuration
 
@@ -135,5 +125,5 @@ The configuration file `config/form-submitter.php` has the following options:
 
 ## License
 
-Laravel & Lumen Stepped Form Submitter is licensed under the MIT License.
+Laravel Stepped Form Submitter is licensed under the MIT License.
 See [LICENSE](LICENSE) for the full license text.

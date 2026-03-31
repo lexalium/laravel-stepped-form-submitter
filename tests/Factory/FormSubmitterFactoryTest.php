@@ -35,7 +35,7 @@ final class FormSubmitterFactoryTest extends TestCase
      */
     public function testCreate(): void
     {
-        $submitter = $this->createMock(FormSubmitterInterface::class);
+        $submitter = $this->createStub(FormSubmitterInterface::class);
 
         $this->container->method('bound')
             ->willReturn(false);
@@ -54,8 +54,8 @@ final class FormSubmitterFactoryTest extends TestCase
      */
     public function testCreateWithTransaction(): void
     {
-        $transaction = $this->createMock(TransactionInterface::class);
-        $submitter = $this->createMock(FormSubmitterInterface::class);
+        $transaction = $this->createStub(TransactionInterface::class);
+        $submitter = $this->createStub(FormSubmitterInterface::class);
 
         $this->container->method('bound')
             ->willReturn(true);
@@ -77,6 +77,7 @@ final class FormSubmitterFactoryTest extends TestCase
     public function testCreateNoSubmittersAddedException(): void
     {
         $this->expectExceptionObject(new NoSubmittersAddedException());
+        $this->expectExceptionMessage('You must register at least one submitter to be able to submit a form.');
 
         $this->factory->create([]);
     }

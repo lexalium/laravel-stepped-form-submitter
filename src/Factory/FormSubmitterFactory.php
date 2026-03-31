@@ -15,9 +15,9 @@ use Lexal\LaravelSteppedFormSubmitter\Exception\NoSubmittersAddedException;
 use function array_map;
 use function is_string;
 
-final class FormSubmitterFactory implements FormSubmitterFactoryInterface
+final readonly class FormSubmitterFactory implements FormSubmitterFactoryInterface
 {
-    public function __construct(private readonly Container $container)
+    public function __construct(private Container $container)
     {
     }
 
